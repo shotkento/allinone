@@ -22,7 +22,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
     private static final String TABLE_NAME = "allinone";
-    private static final String[] COLUMNS = {"_id","day","english_txt","japanese_txt_order","japanese_txt_normal"};
+    private static final String TABLE_TRAINING = "training";
+    private static final String[] COLUMNS = {"allinone._id","allinone.day","allinone.english_txt",
+        "allinone.japanese_txt_order","allinone.japanese_txt_normal","training.count","training.correct"};
     private final int DAY_MIN = 1;
     private final int DAY_MAX = 60;
 
@@ -119,8 +121,15 @@ public class MainActivity extends Activity {
             orderBy = "RANDOM()";
         }
 
+        final String sql = "select allinone._id, allinone.day, allinone.english_txt," +
+        "allinone.japanese_txt_order, allinone.japanese_txt_normal, training.count, training.correct" +
+                " from " + TABLE_NAME +
+                " inner join " + TABLE_TRAINING + " ON " + TABLE_NAME + "._id = " + TABLE_TRAINING + "._id" +
+                " where day BETWEEN " + dayStart + " AND " + dayEnd;
+
         ArrayList<Data> dataList = new ArrayList<Data>();
-        Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?", day, null, null, orderBy);
+//        Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?", day, null, null, orderBy);
+        Cursor cs = mDb.rawQuery(sql, null);
         while (cs.moveToNext()) {
             Data data = new Data();
             data.id = cs.getInt(0);
@@ -128,6 +137,8 @@ public class MainActivity extends Activity {
             data.english_txt = cs.getString(2);
             data.japanese_txt_order = cs.getString(3);
             data.japanese_txt_normal = cs.getString(4);
+            data.count = cs.getInt(5);
+            data.correct = cs.getInt(6);
 
             dataList.add(data);
         }
@@ -141,6 +152,8 @@ public class MainActivity extends Activity {
         String english_txt;
         String japanese_txt_order;
         String japanese_txt_normal;
+        int count;
+        int correct;
     }
 
 }

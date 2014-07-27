@@ -11,12 +11,19 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private final String TAG = "DatabaseHelper";
+
     private static final String DB_NAME = "allinone";
     private static final String DB_NAME_ASSET = "allinone.db";
     private static final int VERSION = 1;
+
+    private final String CREATE_TRAINING = "CREATE TABLE training (_id integer primary key not null, count integer, correct integer)";
+    private final String CREATE_WORD = "CREATE TABLE word (_id integer primary key not null, word_en text, word_jp text, count integer, correct integer)";
+    private final String INSERT_TRAINING = "INSERT INTO training(_id, count, correct) VALUES(?, ?, ?)";
 
     private SQLiteDatabase mDatabase;
     private final Context mContext;
@@ -30,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void createDatabase () throws IOException {
         Log.d("", "uchida createDatabase");
-        if (isExist()) {
+        if (!isExist()) {
             Log.d("", "uchida !isExist()");
             getReadableDatabase();
             try {
@@ -101,13 +108,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // TODO Auto-generated method stub
+        db.execSQL(CREATE_TRAINING);
+        db.execSQL(CREATE_WORD);
 
+        db.beginTransaction();
+        try {
+            SQLiteStatement sql = db.compileStatement(INSERT_TRAINING);
+            for (int i = 1; i <= 419; i++) {
+                sql.bindLong(1, i);
+                sql.bindLong(2, 0);
+                sql.bindLong(3, 0);
+                sql.executeInsert();
+            }
+            Log.d(TAG, "transaction successful!");
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
 
     }
 

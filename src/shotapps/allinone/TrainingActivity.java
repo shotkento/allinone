@@ -212,6 +212,7 @@ public class TrainingActivity extends Activity {
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
             mPlayBtn.setText(" ▶︎");
+            mPlayBtn.setRotation(0);
         }
     }
 
