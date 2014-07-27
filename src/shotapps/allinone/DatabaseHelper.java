@@ -64,7 +64,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (checkDb == null) {
             return false;
         }
-        return true;
+
+        int oldVersion = checkDb.getVersion();
+        int newVersion = VERSION;
+
+        if (oldVersion == newVersion) {
+            // データベースは存在していて最新
+            checkDb.close();
+            return true;
+        }
+
+        // データベースが存在していて最新ではないので削除
+        File f = new File(dbPath);
+        f.delete();
+        return false;
     }
 
     private void copyDatabaseFromAsset() throws IOException {
