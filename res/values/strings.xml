@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AllInOne</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Start画面 -->
+    <string name="start">START</string>
+    <string name="setting">SETTING</string>
+
+    <!-- Training画面 -->
+    <string name="error">読み込みに失敗しました。</string>
+    <string name="answer">Answer</string>
+    <string name="title_activity_training">TrainingActivity</string>
+
+</resources>
