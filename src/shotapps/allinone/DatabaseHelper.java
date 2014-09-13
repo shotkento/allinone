@@ -108,6 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "uchida onCreate!!");
         db.execSQL(CREATE_TRAINING);
         db.execSQL(CREATE_WORD);
 
@@ -125,6 +126,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+
+        Log.d(TAG, "uchida onCreate END!!");
     }
 
     @Override
