@@ -5,12 +5,19 @@
     <string name="action_settings">Settings</string>
 
     <!-- Start画面 -->
-    <string name="start">START</string>
+    <string name="sentence_test">SENTENCE</string>
+    <string name="word_test">WORD</string>
+    <string name="sentence_list">SENTENCE\nLIST</string>
+    <string name="word_list">WORD\nLIST</string>
     <string name="setting">SETTING</string>
 
     <!-- Training画面 -->
     <string name="error">読み込みに失敗しました。</string>
     <string name="answer">Answer</string>
     <string name="title_activity_training">TrainingActivity</string>
+    <string name="title_activity_word">WordActivity</string>
+    <string name="correct">✔</string>
+    <string name="incorrect">×</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 円形の shape を作る -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="oval" >
+ 
+  <solid android:color="#91a7ff" />
+ 
+  <stroke
+    android:width="10dp" />
+ 
+</shape>

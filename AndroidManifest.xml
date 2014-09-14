@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="shotapps.allinone.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +23,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="shotapps.allinone.TrainingActivity"
+            android:name=".TrainingActivity"
             android:label="@string/title_activity_training" >
+        </activity>
+        <activity
+            android:name=".WordActivity"
+            android:label="@string/title_activity_word" >
         </activity>
     </application>
 

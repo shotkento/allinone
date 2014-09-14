@@ -1,8 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:gravity="center"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -11,38 +10,100 @@
     tools:context=".MainActivity"
     android:background="#e0e0e0" >
 
-    <NumberPicker
-        android:id="@+id/day_start"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/settingLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp" />
-    <TextView
-        android:id="@+id/secret"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:text="〜"
-        android:textSize="20sp"
-        android:textColor="#757575" />
-    <NumberPicker
-        android:id="@+id/day_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="20dp" />
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal" >
 
-    <Switch
-        android:id="@+id/random_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp" />
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_margin="20dp"
-        android:text="@string/start"
-        android:textColor="#ffffff"
-        android:background="@drawable/red_button" />
+        <NumberPicker
+            android:id="@+id/day_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/secret"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:text="〜"
+            android:textColor="#757575"
+            android:textSize="20sp" />
+
+        <NumberPicker
+            android:id="@+id/day_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp" />
+
+        <Switch
+            android:id="@+id/random_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp" />
+    </LinearLayout>
+
+    <!-- TEST BUTTON -->
+    <LinearLayout
+        android:id="@+id/testBtnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingLayout"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/red_button"
+            android:text="@string/sentence_test"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/wordTestBtn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/blue_button"
+            android:text="@string/word_test"
+            android:textColor="#fff" />
+
+    </LinearLayout>
+
+
+    <!-- LIST BUTTON -->
+    <LinearLayout
+        android:id="@+id/listBtnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/testBtnLayout"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/sentenceListBtn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/lightred_button"
+            android:text="@string/sentence_list"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/wordListBtn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/lightblue_button"
+            android:text="@string/word_list"
+            android:textColor="#ffffff" />
+
+    </LinearLayout>
+    
+</RelativeLayout>

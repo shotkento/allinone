@@ -23,8 +23,10 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
     private static final String TABLE_NAME = "allinone";
     private static final String TABLE_TRAINING = "training";
-    private static final String[] COLUMNS = {"allinone._id","allinone.day","allinone.english_txt",
-        "allinone.japanese_txt_order","allinone.japanese_txt_normal","training.count","training.correct"};
+    private static final String[] COLUMNS = { "allinone._id", "allinone.day",
+            "allinone.english_txt", "allinone.japanese_txt_order",
+            "allinone.japanese_txt_normal", "training.count",
+            "training.correct" };
     private final int DAY_MIN = 1;
     private final int DAY_MAX = 60;
 
@@ -43,32 +45,33 @@ public class MainActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 
-        this.getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getWindow().setSoftInputMode(
+                LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        mDayStart = (NumberPicker)findViewById(R.id.day_start);
+        // NumberPickerの設定
+        mDayStart = (NumberPicker) findViewById(R.id.day_start);
         mDayStart.setMinValue(DAY_MIN);
         mDayStart.setMaxValue(DAY_MAX);
-        mDayStart.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        mDayEnd = (NumberPicker)findViewById(R.id.day_end);
+        mDayStart
+                .setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        mDayEnd = (NumberPicker) findViewById(R.id.day_end);
         mDayEnd.setMinValue(DAY_MIN);
         mDayEnd.setMaxValue(DAY_MAX);
         mDayEnd.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-        mSecret = (TextView)findViewById(R.id.secret);
+        mSecret = (TextView) findViewById(R.id.secret);
         mSecret.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 mDayEnd.setValue(mDayStart.getValue());
             }
         });
         // Randomスイッチ
-        mRandomSwt =(Switch)findViewById(R.id.random_switch);
+        mRandomSwt = (Switch) findViewById(R.id.random_switch);
 
         // Startボタン設定
-        Button startBtn = (Button)findViewById(R.id.startButton);
-        Typeface tf = Typeface.createFromAsset(getAssets(),"Roboto-Thin.ttf");
+        Button startBtn = (Button) findViewById(R.id.startButton);
+        Typeface tf = Typeface.createFromAsset(getAssets(), "Roboto-Thin.ttf");
         startBtn.setTypeface(tf);
         startBtn.setOnClickListener(new OnClickListener() {
             @Override
@@ -82,8 +85,20 @@ public class MainActivity extends Activity {
                 }
 
                 Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), shotapps.allinone.TrainingActivity.class);
+                intent.setClass(getApplicationContext(),
+                        shotapps.allinone.TrainingActivity.class);
                 intent.putExtra("data", dataList);
+                startActivity(intent);
+            }
+        });
+
+        // Wordテストボタン設定
+        Button wordBtn = (Button) findViewById(R.id.wordTestBtn);
+        wordBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,
+                        WordActivity.class);
                 startActivity(intent);
             }
         });
@@ -115,20 +130,29 @@ public class MainActivity extends Activity {
             dayStart = dayEnd;
             dayEnd = temp;
         }
-        String[] day = new String[]{Integer.toString(dayStart), Integer.toString(dayEnd)};
+        String[] day = new String[] { Integer.toString(dayStart),
+                Integer.toString(dayEnd) };
         String orderBy = null;
         if (random) {
             orderBy = "RANDOM()";
         }
 
-        final String sql = "select allinone._id, allinone.day, allinone.english_txt," +
-        "allinone.japanese_txt_order, allinone.japanese_txt_normal, training.count, training.correct" +
-                " from " + TABLE_NAME +
-                " inner join " + TABLE_TRAINING + " ON " + TABLE_NAME + "._id = " + TABLE_TRAINING + "._id" +
-                " where day BETWEEN " + dayStart + " AND " + dayEnd;
+        final String sql = "select allinone._id, allinone.day, allinone.english_txt,"
+                + "allinone.japanese_txt_order, allinone.japanese_txt_normal, training.count, training.correct"
+                + " from "
+                + TABLE_NAME
+                + " inner join "
+                + TABLE_TRAINING
+                + " ON "
+                + TABLE_NAME
+                + "._id = "
+                + TABLE_TRAINING
+                + "._id"
+                + " where day BETWEEN " + dayStart + " AND " + dayEnd;
 
         ArrayList<Data> dataList = new ArrayList<Data>();
-//        Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?", day, null, null, orderBy);
+        // Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?",
+        // day, null, null, orderBy);
         Cursor cs = mDb.rawQuery(sql, null);
         while (cs.moveToNext()) {
             Data data = new Data();
