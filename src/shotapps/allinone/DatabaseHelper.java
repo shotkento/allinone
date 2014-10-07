@@ -36,9 +36,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDatabase () throws IOException {
-        Log.d("", "uchida createDatabase");
+        Log.d(TAG, "Create DB");
         if (!isExist()) {
-            Log.d("", "uchida !isExist()");
+            // DBがないので作成する
+            Log.d(TAG, "DB is not exist!!");
             getReadableDatabase();
             try {
                 copyDatabaseFromAsset();
@@ -48,17 +49,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 try {
                     checkDb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
                 } catch (SQLiteException e) {
+                    Log.e(TAG, "Failed to open DB");
                 }
                 if (checkDb != null) {
                     checkDb.setVersion(VERSION);
                     checkDb.close();
                 }
             } catch (IOException e) {
-                throw new Error("Error while copying database");
+                throw new Error("Error while copying DB");
             }
+        } else {
+            // 既にDBは作成されてる
+            Log.d(TAG, "DB is exist");
         }
     }
 
+    /**
+     * 再コピーを防止するために、すでにデータベースがあるかどうか判定する
+     *
+     * @return 存在している場合 {@code true}
+     */
     private boolean isExist() {
         String dbPath = mDatabasePath.getAbsolutePath();
 
@@ -66,9 +76,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             checkDb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
+            // DBはまだ存在していない
         }
 
         if (checkDb == null) {
+            // DBはまだ存在していない
             return false;
         }
 
@@ -76,22 +88,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int newVersion = VERSION;
 
         if (oldVersion == newVersion) {
-            // データベースは存在していて最新
+            // DBは存在していて最新
             checkDb.close();
             return true;
         }
 
-        // データベースが存在していて最新ではないので削除
+        // DBが存在していて最新ではないので削除
         File f = new File(dbPath);
         f.delete();
         return false;
     }
 
+    /**
+     * asset に格納したデーだベースをデフォルトのデータベースパスに作成したからのデータベースにコピーする
+     */
     private void copyDatabaseFromAsset() throws IOException {
+        // asset内のデータベースファイルにアクセス
         InputStream input = mContext.getAssets().open(DB_NAME_ASSET);
 
+        // デフォルトのデータベースパスに作成した空のDB
         OutputStream output = new FileOutputStream(mDatabasePath);
 
+        // コピー
         byte[] buffer = new byte[1024];
         int size;
         while ((size = input.read(buffer)) > 0) {

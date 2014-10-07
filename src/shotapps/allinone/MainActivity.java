@@ -12,6 +12,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
@@ -21,6 +22,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "MainActivity";
     private static final String TABLE_NAME = "allinone";
     private static final String TABLE_TRAINING = "training";
     private static final String[] COLUMNS = { "allinone._id", "allinone.day",
@@ -81,12 +83,11 @@ public class MainActivity extends Activity {
                 boolean random = mRandomSwt.isChecked();
                 ArrayList<Data> dataList = findData(dayStart, dayEnd, random);
                 if (dataList.size() == 0) {
+                    Log.e(TAG, "Failed to create data list");
                     return;
                 }
 
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(),
-                        shotapps.allinone.TrainingActivity.class);
+                Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
                 intent.putExtra("data", dataList);
                 startActivity(intent);
             }
