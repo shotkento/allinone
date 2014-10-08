@@ -23,7 +23,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
-    private static final String TABLE_NAME = "allinone";
+    private static final String SENTENCE_TABLE = "sentence_tbl";
+    private static final String WORD_TABLE = "word_tbl";
+    private static final String IDIOM_TABLE = "idiom_tbl";
     private static final String TABLE_TRAINING = "training";
     private static final String[] COLUMNS = { "allinone._id", "allinone.day",
             "allinone.english_txt", "allinone.japanese_txt_order",
@@ -31,6 +33,7 @@ public class MainActivity extends Activity {
             "training.correct" };
     private final int DAY_MIN = 1;
     private final int DAY_MAX = 60;
+    private final int DAY_PACE = 7;
 
     private DatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mDb;
@@ -81,13 +84,15 @@ public class MainActivity extends Activity {
                 int dayStart = mDayStart.getValue();
                 int dayEnd = mDayEnd.getValue();
                 boolean random = mRandomSwt.isChecked();
-                ArrayList<Data> dataList = findData(dayStart, dayEnd, random);
+                ArrayList<SentenceData> dataList = findData(dayStart, dayEnd,
+                        random);
                 if (dataList.size() == 0) {
                     Log.e(TAG, "Failed to create data list");
                     return;
                 }
 
-                Intent intent = new Intent(MainActivity.this, TrainingActivity.class);
+                Intent intent = new Intent(MainActivity.this,
+                        TrainingActivity.class);
                 intent.putExtra("data", dataList);
                 startActivity(intent);
             }
@@ -125,60 +130,59 @@ public class MainActivity extends Activity {
         }
     }
 
-    private ArrayList<Data> findData(int dayStart, int dayEnd, boolean random) {
+    private ArrayList<SentenceData> findData(int dayStart, int dayEnd,
+            boolean random) {
+        Log.d(TAG, "Start findData()");
         if (dayStart > dayEnd) {
+            // スタート日の方が大きければ入れ替え
             int temp = dayStart;
             dayStart = dayEnd;
             dayEnd = temp;
         }
+        // 日にちからidを特定
+        int startId = (dayStart - 1) * DAY_PACE + 1;
+        int endId = dayEnd * DAY_PACE;
+
         String[] day = new String[] { Integer.toString(dayStart),
                 Integer.toString(dayEnd) };
         String orderBy = null;
         if (random) {
+            // ランダムスイッチがONの場合
             orderBy = "RANDOM()";
         }
 
-        final String sql = "select allinone._id, allinone.day, allinone.english_txt,"
-                + "allinone.japanese_txt_order, allinone.japanese_txt_normal, training.count, training.correct"
-                + " from "
-                + TABLE_NAME
-                + " inner join "
-                + TABLE_TRAINING
-                + " ON "
-                + TABLE_NAME
-                + "._id = "
-                + TABLE_TRAINING
-                + "._id"
-                + " where day BETWEEN " + dayStart + " AND " + dayEnd;
+        final String sql = "select * from " + SENTENCE_TABLE
+                + " where _id BETWEEN " + startId + " AND " + endId;
 
-        ArrayList<Data> dataList = new ArrayList<Data>();
+        ArrayList<SentenceData> dataList = new ArrayList<SentenceData>();
         // Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?",
         // day, null, null, orderBy);
         Cursor cs = mDb.rawQuery(sql, null);
         while (cs.moveToNext()) {
-            Data data = new Data();
+            SentenceData data = new SentenceData();
             data.id = cs.getInt(0);
-            data.day = cs.getInt(1);
-            data.english_txt = cs.getString(2);
-            data.japanese_txt_order = cs.getString(3);
-            data.japanese_txt_normal = cs.getString(4);
-            data.count = cs.getInt(5);
-            data.correct = cs.getInt(6);
+            data.eng_sent = cs.getString(1);
+            data.jpn_sent_order = cs.getString(2);
+            data.jpn_sent_normal = cs.getString(3);
+            data.count = cs.getInt(4);
+            data.correct = cs.getInt(5);
+            data.checked = cs.getInt(6);
 
             dataList.add(data);
         }
         cs.close();
+
+        Log.d(TAG, "End findData()");
         return dataList;
     }
 
-    public static class Data implements Serializable {
+    public class SentenceData implements Serializable {
         int id;
-        int day;
-        String english_txt;
-        String japanese_txt_order;
-        String japanese_txt_normal;
-        int count;
+        String eng_sent;
+        String jpn_sent_order;
+        String jpn_sent_normal;
         int correct;
+        int count;
+        int checked;
     }
-
 }

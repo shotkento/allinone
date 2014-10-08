@@ -11,7 +11,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -21,10 +20,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME_ASSET = "allinone.db";
     private static final int VERSION = 1;
 
-    private final String CREATE_TRAINING = "CREATE TABLE training (_id integer primary key not null, count integer, correct integer)";
-    private final String CREATE_WORD = "CREATE TABLE word (_id integer primary key not null, word_en text, word_jp text, count integer, correct integer)";
-    private final String INSERT_TRAINING = "INSERT INTO training(_id, count, correct) VALUES(?, ?, ?)";
-
     private SQLiteDatabase mDatabase;
     private final Context mContext;
     private final File mDatabasePath;
@@ -33,10 +28,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, VERSION);
         mContext = context;
         mDatabasePath = mContext.getDatabasePath(DB_NAME);
+        Log.d(TAG, "DB path is " + mDatabasePath);
     }
 
-    public void createDatabase () throws IOException {
+    public void createDatabase() throws IOException {
         Log.d(TAG, "Create DB");
+        Log.d(TAG, "CD DB path is " + mDatabasePath);
         if (!isExist()) {
             // DBがないので作成する
             Log.d(TAG, "DB is not exist!!");
@@ -47,11 +44,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String dbPath = mDatabasePath.getAbsolutePath();
                 SQLiteDatabase checkDb = null;
                 try {
-                    checkDb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
+                    checkDb = SQLiteDatabase.openDatabase(dbPath, null,
+                            SQLiteDatabase.OPEN_READWRITE);
                 } catch (SQLiteException e) {
                     Log.e(TAG, "Failed to open DB");
                 }
                 if (checkDb != null) {
+                    Log.d(TAG, "DB is not null");
                     checkDb.setVersion(VERSION);
                     checkDb.close();
                 }
@@ -74,7 +73,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase checkDb = null;
         try {
-            checkDb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
+            checkDb = SQLiteDatabase.openDatabase(dbPath, null,
+                    SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             // DBはまだ存在していない
         }
@@ -127,25 +127,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "uchida onCreate!!");
-        db.execSQL(CREATE_TRAINING);
-        db.execSQL(CREATE_WORD);
-
-        db.beginTransaction();
-        try {
-            SQLiteStatement sql = db.compileStatement(INSERT_TRAINING);
-            for (int i = 1; i <= 419; i++) {
-                sql.bindLong(1, i);
-                sql.bindLong(2, 0);
-                sql.bindLong(3, 0);
-                sql.executeInsert();
-            }
-            Log.d(TAG, "transaction successful!");
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        Log.d(TAG, "uchida onCreate END!!");
     }
 
     @Override
