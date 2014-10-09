@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TrainingActivity"
+            android:name=".SentenceActivity"
             android:label="@string/title_activity_training" >
         </activity>
         <activity

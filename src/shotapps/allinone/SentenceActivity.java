@@ -9,9 +9,12 @@ import java.util.ArrayList;
 import shotapps.allinone.MainActivity.SentenceData;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -19,9 +22,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class TrainingActivity extends Activity {
+public class SentenceActivity extends Activity {
+    private final String TAG = "TrainingActivity";
+
     private Button mAnswerBtn;
     private Button mPlayBtn;
+    private Button mWordBrn;
     private ArrayList<SentenceData> mDataList;
     private SentenceData mData;
     private TextView mNumber;
@@ -38,13 +44,15 @@ public class TrainingActivity extends Activity {
     @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Start onCreate()");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_training);
+        setContentView(R.layout.activity_sentence);
 
         mNumber = (TextView) findViewById(R.id.number);
         mDay = (TextView) findViewById(R.id.day);
         mJapanese = (TextView) findViewById(R.id.japanese_txt);
         mEnglish = (TextView) findViewById(R.id.english_txt);
+        mWordBrn = (Button) findViewById(R.id.wordDialog_button);
 
         ActionBar actionBar = getActionBar();
         actionBar.hide();
@@ -60,7 +68,6 @@ public class TrainingActivity extends Activity {
 
         // 日本語
         mJapanese.setOnClickListener(new OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if (isNormal) {
@@ -75,6 +82,16 @@ public class TrainingActivity extends Activity {
 
         // 回答入力エリア
         mEdit = (EditText) findViewById(R.id.editText);
+
+        // 再生ボタン
+        mPlayBtn = (Button) findViewById(R.id.play_button);
+        mPlayBtn.setRotation(90);
+        mPlayBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playSound();
+            }
+        });
 
         // Answerボタン設定
         mAnswerBtn = (Button) findViewById(R.id.answer_button);
@@ -91,11 +108,31 @@ public class TrainingActivity extends Activity {
             }
         });
 
-        mPlayBtn = (Button) findViewById(R.id.play_button);
-        mPlayBtn.setOnClickListener(new OnClickListener() {
+        // WORDボタン
+        mWordBrn.setOnClickListener(new OnClickListener() {
+            final String[] test = { "a", "b", "c" };
+            final boolean[] checked = { true, false, true };
+
             @Override
             public void onClick(View v) {
-                playSound();
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        SentenceActivity.this);
+                builder.setMultiChoiceItems(test, checked,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which, boolean isChecked) {
+                                checked[which] = isChecked;
+                            }
+                        })
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        // TODO DBに登録
+                                    }
+                                }).show();
             }
         });
 
@@ -201,8 +238,7 @@ public class TrainingActivity extends Activity {
     private void playSound() {
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
-            mPlayBtn.setText(" ▶︎");
-            mPlayBtn.setRotation(0);
+            mPlayBtn.setText(" ▲︎");
         } else {
             mPlayer = MediaPlayer.create(
                     getApplicationContext(),
@@ -212,15 +248,13 @@ public class TrainingActivity extends Activity {
             mPlayer.setLooping(true);
             mPlayer.start();
             mPlayBtn.setText("〓");
-            mPlayBtn.setRotation(90);
         }
     }
 
     private void stopSound() {
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
-            mPlayBtn.setText(" ▶︎");
-            mPlayBtn.setRotation(0);
+            mPlayBtn.setText(" ▲︎");
         }
     }
 

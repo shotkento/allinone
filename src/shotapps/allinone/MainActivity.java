@@ -92,9 +92,10 @@ public class MainActivity extends Activity {
                 }
 
                 Intent intent = new Intent(MainActivity.this,
-                        TrainingActivity.class);
+                        SentenceActivity.class);
                 intent.putExtra("data", dataList);
                 startActivity(intent);
+                Log.d(TAG, "Start SentenceActivity");
             }
         });
 
@@ -143,21 +144,21 @@ public class MainActivity extends Activity {
         int startId = (dayStart - 1) * DAY_PACE + 1;
         int endId = dayEnd * DAY_PACE;
 
-        String[] day = new String[] { Integer.toString(dayStart),
-                Integer.toString(dayEnd) };
+        String[] id = new String[] { Integer.toString(startId),
+                Integer.toString(endId) };
         String orderBy = null;
         if (random) {
             // ランダムスイッチがONの場合
             orderBy = "RANDOM()";
         }
-
-        final String sql = "select * from " + SENTENCE_TABLE
-                + " where _id BETWEEN " + startId + " AND " + endId;
+        //
+        // final String sql = "select * from " + SENTENCE_TABLE
+        // + " where _id BETWEEN " + startId + " AND " + endId;
 
         ArrayList<SentenceData> dataList = new ArrayList<SentenceData>();
-        // Cursor cs = mDb.query(TABLE_NAME, COLUMNS, "day BETWEEN ? AND ?",
-        // day, null, null, orderBy);
-        Cursor cs = mDb.rawQuery(sql, null);
+        Cursor cs = mDb.query(SENTENCE_TABLE, null, "_id BETWEEN ? AND ?", id,
+                null, null, orderBy);
+        // Cursor cs = mDb.rawQuery(sql, null);
         while (cs.moveToNext()) {
             SentenceData data = new SentenceData();
             data.id = cs.getInt(0);
@@ -172,11 +173,11 @@ public class MainActivity extends Activity {
         }
         cs.close();
 
-        Log.d(TAG, "End findData()");
+        Log.d(TAG, "End findData() dataList.size() is " + dataList.size());
         return dataList;
     }
 
-    public class SentenceData implements Serializable {
+    public static class SentenceData implements Serializable {
         int id;
         String eng_sent;
         String jpn_sent_order;

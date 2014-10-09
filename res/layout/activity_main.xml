@@ -58,8 +58,8 @@
 
         <Button
             android:id="@+id/startButton"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_margin="20dp"
             android:background="@drawable/red_button"
             android:text="@string/sentence_test"
@@ -67,15 +67,13 @@
 
         <Button
             android:id="@+id/wordTestBtn"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_margin="20dp"
             android:background="@drawable/blue_button"
             android:text="@string/word_test"
             android:textColor="#fff" />
-
     </LinearLayout>
-
 
     <!-- LIST BUTTON -->
     <LinearLayout
@@ -88,21 +86,23 @@
 
         <Button
             android:id="@+id/sentenceListBtn"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_margin="20dp"
+            android:layout_gravity="center"
             android:background="@drawable/lightred_button"
             android:text="@string/sentence_list"
-            android:textColor="#ffffff" />
+            android:textColor="#f36c60" />
 
         <Button
             android:id="@+id/wordListBtn"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_margin="20dp"
+            android:gravity="center"
             android:background="@drawable/lightblue_button"
             android:text="@string/word_list"
-            android:textColor="#ffffff" />
+            android:textColor="#738ffe" />
 
     </LinearLayout>
     
