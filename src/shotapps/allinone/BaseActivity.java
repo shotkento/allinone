@@ -21,7 +21,7 @@ import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public abstract class BaseActivity extends Activity {
     private static final String TAG = "MainActivity";
     private static final String SENTENCE_TABLE = "sentence_tbl";
     private static final String WORD_TABLE = "word_tbl";
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
                     return;
                 }
 
-                Intent intent = new Intent(MainActivity.this,
+                Intent intent = new Intent(BaseActivity.this,
                         SentenceActivity.class);
                 intent.putExtra("data", dataList);
                 startActivity(intent);
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
         wordBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,
+                Intent intent = new Intent(BaseActivity.this,
                         WordActivity.class);
                 startActivity(intent);
             }
@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(MainActivity.this,
+                Intent intent = new Intent(BaseActivity.this,
                         WordListActivity.class);
                 startActivity(intent);
                 Log.d(TAG, "Start WordListActivity");

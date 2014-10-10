@@ -19,5 +19,6 @@
     <string name="correct">✔</string>
     <string name="incorrect">×</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_word_list">WordListActivity</string>
 
 </resources>
