@@ -2,6 +2,7 @@ package shotapps.allinone;
 
 import java.util.ArrayList;
 
+import shotapps.allinone.data.WordData;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -28,8 +29,10 @@ public class WordListActivity extends BaseActivity implements TabListener {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        ArrayList<WordData> wordDataList = findWordData(WORD_TABLE, 0, 0, ORDER_ASC);
-        ArrayList<WordData> idiomDataList = findWordData(IDIOM_TABLE, 0, 0, ORDER_ASC);
+        ArrayList<WordData> wordDataList = findWordData(WORD_TABLE, 0, 0,
+                ORDER_ASC);
+        ArrayList<WordData> idiomDataList = findWordData(IDIOM_TABLE, 0, 0,
+                ORDER_ASC);
 
         if (wordDataList.size() == 0 || idiomDataList.size() == 0) {
             Log.e(TAG, "WordData is not found!!");
@@ -42,25 +45,23 @@ public class WordListActivity extends BaseActivity implements TabListener {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                getActionBar().setSelectedNavigationItem(position);
-            }
-        });
+        mViewPager
+                .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        super.onPageSelected(position);
+                        getActionBar().setSelectedNavigationItem(position);
+                    }
+                });
 
         for (int i = 0; i < adapter.getCount(); i++) {
             actionBar.addTab(actionBar.newTab()
-            .setText(adapter.getPageTitle(i))
-            .setTabListener(this));
+                    .setText(adapter.getPageTitle(i)).setTabListener(this));
         }
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
-        final String[] tabTitle = {
-            "WORD", "IDIOM"
-        };
+        final String[] tabTitle = { "WORD", "IDIOM" };
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -91,10 +92,12 @@ public class WordListActivity extends BaseActivity implements TabListener {
     }
 
     @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    }
 
     @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

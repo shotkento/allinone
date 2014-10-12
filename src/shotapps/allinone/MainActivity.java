@@ -2,6 +2,8 @@ package shotapps.allinone;
 
 import java.util.ArrayList;
 
+import shotapps.allinone.data.SentenceData;
+import shotapps.allinone.data.WordData;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -76,12 +78,12 @@ public class MainActivity extends BaseActivity {
                 int dayEnd = mDayEnd.getValue();
                 boolean random = mRandomSwt.isChecked();
 
-                ArrayList<SentenceData> sentenceDataList = findData(dayStart, dayEnd,
-                        checkRandom(random));
-                ArrayList<WordData> wordDataList = findWordData(WORD_TABLE, dayStart, dayEnd,
-                        ORDER_ASC);
-                ArrayList<WordData> idiomDataList = findWordData(IDIOM_TABLE, dayStart, dayEnd,
-                        ORDER_ASC);
+                ArrayList<SentenceData> sentenceDataList = findData(dayStart,
+                        dayEnd, checkRandom(random));
+                ArrayList<WordData> wordDataList = findWordData(WORD_TABLE,
+                        dayStart, dayEnd, ORDER_ASC);
+                ArrayList<WordData> idiomDataList = findWordData(IDIOM_TABLE,
+                        dayStart, dayEnd, ORDER_ASC);
                 if (sentenceDataList.size() == 0) {
                     Log.e(TAG, "SentenceData is not found!!");
                     return;

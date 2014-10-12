@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import shotapps.allinone.data.SentenceData;
+import shotapps.allinone.data.WordData;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -36,6 +38,7 @@ public class SentenceActivity extends BaseActivity {
     private WordData mIdiomData;
     private TextView mNumber;
     private TextView mDay;
+    private TextView mProbalility;
     private TextView mJapanese;
     private TextView mEnglish;
     private EditText mEdit;
@@ -52,14 +55,15 @@ public class SentenceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sentence);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
+
         mNumber = (TextView) findViewById(R.id.number);
         mDay = (TextView) findViewById(R.id.day);
+        mProbalility = (TextView) findViewById(R.id.probability);
         mJapanese = (TextView) findViewById(R.id.japanese_txt);
         mEnglish = (TextView) findViewById(R.id.english_txt);
         mWordBrn = (Button) findViewById(R.id.wordDialog_button);
-
-        ActionBar actionBar = getActionBar();
-        actionBar.hide();
 
         // データ取得
         mSentenceDataList = myApplication.getSentenceDataList();
@@ -91,10 +95,10 @@ public class SentenceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isNormal) {
-                    mJapanese.setText(mSentenceData.jpn_sent_order);
+                    mJapanese.setText(mSentenceData.getJpnSentOrder());
                     isNormal = false;
                 } else {
-                    mJapanese.setText(mSentenceData.jpn_sent_normal);
+                    mJapanese.setText(mSentenceData.getJpnSentNormal());
                     isNormal = true;
                 }
             }
@@ -121,7 +125,7 @@ public class SentenceActivity extends BaseActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                mEnglish.setText(mSentenceData.eng_sent);
+                mEnglish.setText(mSentenceData.getEngSent());
                 mAnswerBtn.setEnabled(false);
                 mCorrectBtn.setVisibility(View.VISIBLE);
                 mIncorrectBtn.setVisibility(View.VISIBLE);
@@ -180,9 +184,10 @@ public class SentenceActivity extends BaseActivity {
 
     private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> list) {
         ArrayList<WordData> currentWordList = new ArrayList<WordData>();
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             WordData data = list.get(i);
-            if(data.getSentNum1() == mSentenceData.id || data.getSentNum2() == mSentenceData.id) {
+            if (data.getSentNum1() == mSentenceData.getId()
+                    || data.getSentNum2() == mSentenceData.getId()) {
                 currentWordList.add(data);
             }
         }
@@ -194,8 +199,8 @@ public class SentenceActivity extends BaseActivity {
         super.onResume();
         mPlayer = MediaPlayer.create(
                 this,
-                getResources().getIdentifier("n" + mSentenceData.id, "raw",
-                        getPackageName()));
+                getResources().getIdentifier("n" + mSentenceData.getId(),
+                        "raw", getPackageName()));
     }
 
     @Override
@@ -209,9 +214,16 @@ public class SentenceActivity extends BaseActivity {
     }
 
     private void setData() {
-        mNumber.setText("No." + mSentenceData.id);
-        mJapanese.setText(mSentenceData.jpn_sent_normal);
+        mNumber.setText("No." + mSentenceData.getId());
+        mDay.setText("Day " + getDay());
+        mProbalility.setText(mSentenceData.getCorrect() + "/"
+                + mSentenceData.getCount());
+        mJapanese.setText(mSentenceData.getJpnSentNormal());
         mEnglish.setText("");
+    }
+
+    private int getDay() {
+        return (mSentenceData.getId() - 1) / DAY_PACE + 1;
     }
 
     private void setNext() {
@@ -226,7 +238,8 @@ public class SentenceActivity extends BaseActivity {
             mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
 
             for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
-                Log.d(TAG, "word = " + mCurrentIdiomDataList.get(i).getEngWord());
+                Log.d(TAG, "word = "
+                        + mCurrentIdiomDataList.get(i).getEngWord());
             }
 
             setData();
@@ -285,8 +298,8 @@ public class SentenceActivity extends BaseActivity {
         } else {
             mPlayer = MediaPlayer.create(
                     getApplicationContext(),
-                    getResources().getIdentifier("n" + mSentenceData.id, "raw",
-                            getPackageName()));
+                    getResources().getIdentifier("n" + mSentenceData.getId(),
+                            "raw", getPackageName()));
             mPlayer.seekTo(1500);
             mPlayer.setLooping(true);
             mPlayer.start();

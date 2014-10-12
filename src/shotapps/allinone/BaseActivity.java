@@ -1,10 +1,11 @@
 package shotapps.allinone;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import shotapps.allinone.data.MyApplication;
+import shotapps.allinone.data.SentenceData;
+import shotapps.allinone.data.WordData;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +28,7 @@ public abstract class BaseActivity extends FragmentActivity {
             "training.correct" };
     private final int DAY_MIN = 1;
     private final int DAY_MAX = 60;
-    private final int DAY_PACE = 7;
+    protected final int DAY_PACE = 7;
 
     protected DatabaseHelper databaseHelper;
     protected SQLiteDatabase db;
@@ -70,17 +71,17 @@ public abstract class BaseActivity extends FragmentActivity {
         String[] id = getIdScope(dayStart, dayEnd);
 
         ArrayList<SentenceData> dataList = new ArrayList<SentenceData>();
-        Cursor cs = db.query(SENTENCE_TABLE, null, SELECT, id,
-                null, null, orderBy);
+        Cursor cs = db.query(SENTENCE_TABLE, null, SELECT, id, null, null,
+                orderBy);
         while (cs.moveToNext()) {
             SentenceData data = new SentenceData();
-            data.id = cs.getInt(0);
-            data.eng_sent = cs.getString(1);
-            data.jpn_sent_order = cs.getString(2);
-            data.jpn_sent_normal = cs.getString(3);
-            data.count = cs.getInt(4);
-            data.correct = cs.getInt(5);
-            data.checked = cs.getInt(6);
+            data.setId(cs.getInt(0));
+            data.setEngSent(cs.getString(1));
+            data.setJpnSentOrder(cs.getString(2));
+            data.setJpnSentNormal(cs.getString(3));
+            data.setCount(cs.getInt(4));
+            data.setCorrect(cs.getInt(5));
+            data.setChecked(cs.getInt(6));
 
             dataList.add(data);
         }
@@ -90,7 +91,8 @@ public abstract class BaseActivity extends FragmentActivity {
         return dataList;
     }
 
-    protected ArrayList<WordData> findWordData(String table, int dayStart, int dayEnd, String orderBy) {
+    protected ArrayList<WordData> findWordData(String table, int dayStart,
+            int dayEnd, String orderBy) {
 
         String[] idScope = getIdScope(dayStart, dayEnd);
         String selection = WORD_SELECT;
@@ -98,13 +100,13 @@ public abstract class BaseActivity extends FragmentActivity {
             selection = null;
         } else {
             Log.d(TAG, "idScope0 = " + idScope[0] + " idScope1 = " + idScope[1]);
-            String[] temp = {idScope[0], idScope[1], idScope[0], idScope[1]};
+            String[] temp = { idScope[0], idScope[1], idScope[0], idScope[1] };
             idScope = temp;
         }
 
         ArrayList<WordData> wordDataList = new ArrayList<WordData>();
-        Cursor cs = db.query(table, null, selection, idScope,
-                null, null, orderBy);
+        Cursor cs = db.query(table, null, selection, idScope, null, null,
+                orderBy);
 
         while (cs.moveToNext()) {
             WordData data = new WordData();
@@ -121,7 +123,9 @@ public abstract class BaseActivity extends FragmentActivity {
         }
         cs.close();
 
-        Log.d(TAG, "End findWordData() wordDataList.size() is " + wordDataList.size());
+        Log.d(TAG,
+                "End findWordData() wordDataList.size() is "
+                        + wordDataList.size());
         return wordDataList;
     }
 
@@ -151,80 +155,5 @@ public abstract class BaseActivity extends FragmentActivity {
         String[] id = new String[] { Integer.toString(startId),
                 Integer.toString(endId) };
         return id;
-    }
-
-    public static class SentenceData implements Serializable {
-        int id;
-        String eng_sent;
-        String jpn_sent_order;
-        String jpn_sent_normal;
-        int correct;
-        int count;
-        int checked;
-
-    }
-
-    public static class WordData implements Serializable {
-        private int id;
-        private String engWord;
-        private String jpnWord;
-        private int sentNum1;
-        private int sentNum2;
-        private int correct;
-        private int count;
-        private boolean checked;
-
-        public int getId() {
-            return id;
-        }
-        public String getEngWord() {
-            return engWord;
-        }
-        public String getJpnWord() {
-            return jpnWord;
-        }
-        public int getSentNum1() {
-            return sentNum1;
-        }
-        public int getSentNum2() {
-            return sentNum2;
-        }
-        public int getCorrect() {
-            return correct;
-        }
-        public int getCount() {
-            return count;
-        }
-        public boolean getChecked() {
-            return checked;
-        }
-        public void setId(int id) {
-            this.id = id;
-        }
-        public void setEngWord(String engWord) {
-            this.engWord = engWord;
-        }
-        public void setJpnWord(String jpnWord) {
-            this.jpnWord = jpnWord;
-        }
-        public void setSentNum1(int sentNum1) {
-            this.sentNum1 = sentNum1;
-        }
-        public void setSentNum2(int sentNum2) {
-            this.sentNum2 = sentNum2;
-        }
-        public void setCorrect(int correct) {
-            this.correct = correct;
-        }
-        public void setCount(int count) {
-            this.count = count;
-        }
-        public void setChecked(int checked) {
-            if (checked == 0) {
-                this.checked = false;
-            } else {
-                this.checked = true;
-            }
-        }
     }
 }
