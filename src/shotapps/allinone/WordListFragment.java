@@ -5,6 +5,7 @@ import java.util.List;
 
 import shotapps.allinone.data.MyApplication;
 import shotapps.allinone.data.WordData;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -20,6 +21,18 @@ import android.widget.TextView;
 public class WordListFragment extends ListFragment {
     private static final String TAG = WordListFragment.class.getSimpleName();
     private MyApplication mMyApplication;
+    private WordListFragmentListener mListener;
+    private String tableName;
+
+    public interface WordListFragmentListener {
+        public void saveChecked(String table, int id, boolean checked);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mListener = (WordListFragmentListener) activity;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -31,9 +44,11 @@ public class WordListFragment extends ListFragment {
         switch (getArguments().getInt("num")) {
         case 0:
             dataList = mMyApplication.getWordDataList();
+            tableName = BaseActivity.WORD_TABLE;
             break;
         case 1:
             dataList = mMyApplication.getIdiomDataList();
+            tableName = BaseActivity.IDIOM_TABLE;
             break;
         }
         Log.d(TAG, "wordDataList.size = " + dataList.size());
@@ -43,8 +58,21 @@ public class WordListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
+    public void onListItemClick(ListView listView, View view, int position,
+            long id) {
+        super.onListItemClick(listView, view, position, id);
+
+        // 選択された１行のデータを取得
+        WordData data = (WordData) listView.getItemAtPosition(position);
+
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+        if (checkBox.isChecked()) {
+            checkBox.setChecked(false);
+        } else {
+            checkBox.setChecked(true);
+        }
+
+        mListener.saveChecked(tableName, data.getId(), checkBox.isChecked());
     }
 
     public class CustomAdapter extends ArrayAdapter<WordData> {

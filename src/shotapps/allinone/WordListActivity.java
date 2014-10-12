@@ -2,11 +2,13 @@ package shotapps.allinone;
 
 import java.util.ArrayList;
 
+import shotapps.allinone.WordListFragment.WordListFragmentListener;
 import shotapps.allinone.data.WordData;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class WordListActivity extends BaseActivity implements TabListener {
+public class WordListActivity extends BaseActivity implements TabListener,
+        WordListFragmentListener {
     private static final String TAG = WordListActivity.class.getSimpleName();
 
     private ViewPager mViewPager;
@@ -112,5 +115,21 @@ public class WordListActivity extends BaseActivity implements TabListener {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void saveChecked(String table, int id, boolean checked) {
+        ContentValues cv = new ContentValues();
+        cv.put("checked", boolean2Int(checked));
+
+        db.update(table, cv, "_id = " + id, null);
+    }
+
+    private int boolean2Int(boolean checked) {
+        if (checked) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

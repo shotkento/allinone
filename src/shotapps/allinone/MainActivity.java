@@ -105,6 +105,14 @@ public class MainActivity extends BaseActivity {
         wordBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                int dayStart = mDayStart.getValue();
+                int dayEnd = mDayEnd.getValue();
+                boolean random = mRandomSwt.isChecked();
+
+                ArrayList<WordData> wordDataList = findWordData(WORD_TABLE,
+                        dayStart, dayEnd, ORDER_ASC);
+                myApplication.setWordDataList(wordDataList);
+
                 Intent intent = new Intent(MainActivity.this,
                         WordActivity.class);
                 startActivity(intent);
