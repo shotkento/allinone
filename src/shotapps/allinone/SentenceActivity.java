@@ -6,9 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import shotapps.allinone.MainActivity.SentenceData;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,14 +20,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SentenceActivity extends Activity {
+public class SentenceActivity extends BaseActivity {
     private final String TAG = "TrainingActivity";
 
     private Button mAnswerBtn;
     private Button mPlayBtn;
     private Button mWordBrn;
-    private ArrayList<SentenceData> mDataList;
-    private SentenceData mData;
+    private ArrayList<SentenceData> mSentenceDataList;
+    private ArrayList<WordData> mWordDataList;
+    private ArrayList<WordData> mCurrentWordDataList;
+    private ArrayList<WordData> mIdiomDataList;
+    private ArrayList<WordData> mCurrentIdiomDataList;
+    private SentenceData mSentenceData;
+    private WordData mWordData;
+    private WordData mIdiomData;
     private TextView mNumber;
     private TextView mDay;
     private TextView mJapanese;
@@ -57,10 +61,26 @@ public class SentenceActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.hide();
 
-        // intentからデータ取得
-        mDataList = (ArrayList<SentenceData>) getIntent().getSerializableExtra(
-                "data");
-        mData = mDataList.get(0);
+        // データ取得
+        mSentenceDataList = myApplication.getSentenceDataList();
+        mSentenceData = mSentenceDataList.get(0);
+
+        // 対象No.の単語リストを取得
+        mWordDataList = myApplication.getWordDataList();
+        mCurrentWordDataList = getCurrentWordList(mWordDataList);
+
+        for (int i = 0; i < mCurrentWordDataList.size(); i++) {
+            Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
+        }
+
+        // 対象No.の熟語リストを取得
+        mIdiomDataList = myApplication.getIdiomDataList();
+        mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
+
+        for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
+            Log.d(TAG, "word = " + mCurrentIdiomDataList.get(i).getEngWord());
+        }
+
         mDataNumber = 1;
         isNormal = true;
 
@@ -71,10 +91,10 @@ public class SentenceActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (isNormal) {
-                    mJapanese.setText(mData.jpn_sent_order);
+                    mJapanese.setText(mSentenceData.jpn_sent_order);
                     isNormal = false;
                 } else {
-                    mJapanese.setText(mData.jpn_sent_normal);
+                    mJapanese.setText(mSentenceData.jpn_sent_normal);
                     isNormal = true;
                 }
             }
@@ -101,7 +121,7 @@ public class SentenceActivity extends Activity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                mEnglish.setText(mData.eng_sent);
+                mEnglish.setText(mSentenceData.eng_sent);
                 mAnswerBtn.setEnabled(false);
                 mCorrectBtn.setVisibility(View.VISIBLE);
                 mIncorrectBtn.setVisibility(View.VISIBLE);
@@ -158,12 +178,23 @@ public class SentenceActivity extends Activity {
 
     }
 
+    private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> list) {
+        ArrayList<WordData> currentWordList = new ArrayList<WordData>();
+        for(int i = 0; i < list.size(); i++) {
+            WordData data = list.get(i);
+            if(data.getSentNum1() == mSentenceData.id || data.getSentNum2() == mSentenceData.id) {
+                currentWordList.add(data);
+            }
+        }
+        return currentWordList;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         mPlayer = MediaPlayer.create(
                 this,
-                getResources().getIdentifier("n" + mData.id, "raw",
+                getResources().getIdentifier("n" + mSentenceData.id, "raw",
                         getPackageName()));
     }
 
@@ -178,14 +209,26 @@ public class SentenceActivity extends Activity {
     }
 
     private void setData() {
-        mNumber.setText("No." + mData.id);
-        mJapanese.setText(mData.jpn_sent_normal);
+        mNumber.setText("No." + mSentenceData.id);
+        mJapanese.setText(mSentenceData.jpn_sent_normal);
         mEnglish.setText("");
     }
 
     private void setNext() {
-        if (mDataList.size() > mDataNumber) {
-            mData = mDataList.get(mDataNumber);
+        if (mSentenceDataList.size() > mDataNumber) {
+            mSentenceData = mSentenceDataList.get(mDataNumber);
+            mCurrentWordDataList = getCurrentWordList(mWordDataList);
+
+            for (int i = 0; i < mCurrentWordDataList.size(); i++) {
+                Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
+            }
+
+            mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
+
+            for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
+                Log.d(TAG, "word = " + mCurrentIdiomDataList.get(i).getEngWord());
+            }
+
             setData();
             mDataNumber++;
 
@@ -207,7 +250,7 @@ public class SentenceActivity extends Activity {
         try {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             ObjectOutputStream objectOut = new ObjectOutputStream(byteOut);
-            objectOut.writeObject(mData);
+            objectOut.writeObject(mSentenceData);
             buf = byteOut.toByteArray();
         } catch (Exception e) {
         }
@@ -227,7 +270,7 @@ public class SentenceActivity extends Activity {
                             buf);
                     ObjectInputStream objectInput = new ObjectInputStream(
                             byteInput);
-                    mData = (SentenceData) objectInput.readObject();
+                    mSentenceData = (SentenceData) objectInput.readObject();
                     setData();
                 } catch (Exception e) {
                 }
@@ -242,7 +285,7 @@ public class SentenceActivity extends Activity {
         } else {
             mPlayer = MediaPlayer.create(
                     getApplicationContext(),
-                    getResources().getIdentifier("n" + mData.id, "raw",
+                    getResources().getIdentifier("n" + mSentenceData.id, "raw",
                             getPackageName()));
             mPlayer.seekTo(1500);
             mPlayer.setLooping(true);

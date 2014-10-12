@@ -1,10 +1,9 @@
 package shotapps.allinone;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
 
-public class WordActivity extends Activity {
+public class WordActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

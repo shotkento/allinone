@@ -8,14 +8,14 @@
     android:background="#fff" >
 
     <TextView
-        android:id="@+id/eng_word"
+        android:id="@+id/engTestWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="grin"
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/jpn_word"
+        android:id="@+id/jpnTestWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

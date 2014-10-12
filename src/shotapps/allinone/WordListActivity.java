@@ -2,67 +2,108 @@ package shotapps.allinone;
 
 import java.util.ArrayList;
 
-import shotapps.allinone.MainActivity.WordData;
-import android.app.Activity;
-import android.database.Cursor;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class WordListActivity extends Activity {
+public class WordListActivity extends BaseActivity implements TabListener {
     private static final String TAG = WordListActivity.class.getSimpleName();
+
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_list);
 
-        ArrayList<WordData> dataList = findWordData();
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        if (dataList.size() == 0) {
+        ArrayList<WordData> wordDataList = findWordData(WORD_TABLE, 0, 0, ORDER_ASC);
+        ArrayList<WordData> idiomDataList = findWordData(IDIOM_TABLE, 0, 0, ORDER_ASC);
+
+        if (wordDataList.size() == 0 || idiomDataList.size() == 0) {
             Log.e(TAG, "WordData is not found!!");
             return;
         }
-        Log.d(TAG, "mDatalist size is " + dataList.size());
+
+        myApplication.setWordDataList(wordDataList);
+        myApplication.setIdiomDataList(idiomDataList);
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                getActionBar().setSelectedNavigationItem(position);
+            }
+        });
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            actionBar.addTab(actionBar.newTab()
+            .setText(adapter.getPageTitle(i))
+            .setTabListener(this));
+        }
     }
 
-    private ArrayList<WordData> findWordData() {
-        ArrayList<WordData> dataList = new ArrayList<WordData>();
-        Cursor cs = mDb.query(WORD_TABLE, null, null, null, null, null,
-                ORDER_ASC);
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+        final String[] tabTitle = {
+            "WORD", "IDIOM"
+        };
 
-        while (cs.moveToNext()) {
-            WordData data = new WordData();
-            data.id = cs.getInt(0);
-            data.eng_word = cs.getString(1);
-            data.jpn_word = cs.getString(2);
-            data.sent_num1 = cs.getInt(3);
-            data.sent_num2 = cs.getInt(4);
-            data.count = cs.getInt(5);
-            data.correct = cs.getInt(6);
-            data.checked = cs.getInt(7);
-
-            dataList.add(data);
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
-        cs.close();
 
-        Log.d(TAG, "End findWordData() dataList.size() is " + dataList.size());
-        return dataList;
+        @Override
+        public Fragment getItem(int position) {
+            WordListFragment wordListFragment = new WordListFragment();
+            Bundle args = new Bundle();
+            args.putInt("num", position);
+            wordListFragment.setArguments(args);
+            return wordListFragment;
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitle.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitle[position];
+        }
+    }
+
+    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        mViewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+
+    @Override
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {}
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.word_list, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
