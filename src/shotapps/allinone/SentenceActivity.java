@@ -33,6 +33,7 @@ public class SentenceActivity extends BaseActivity {
     private ArrayList<WordData> mCurrentWordDataList;
     private ArrayList<WordData> mIdiomDataList;
     private ArrayList<WordData> mCurrentIdiomDataList;
+    private ArrayList<WordData> mCombinedDataList;
     private SentenceData mSentenceData;
     private WordData mWordData;
     private WordData mIdiomData;
@@ -69,12 +70,14 @@ public class SentenceActivity extends BaseActivity {
         mSentenceDataList = myApplication.getSentenceDataList();
         mSentenceData = mSentenceDataList.get(0);
 
+        mCombinedDataList = new ArrayList<WordData>();
+
         // 対象No.の単語リストを取得
         mWordDataList = myApplication.getWordDataList();
         mCurrentWordDataList = getCurrentWordList(mWordDataList);
 
         for (int i = 0; i < mCurrentWordDataList.size(); i++) {
-            Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
+            mCombinedDataList.add(mCurrentWordDataList.get(i));
         }
 
         // 対象No.の熟語リストを取得
@@ -82,7 +85,7 @@ public class SentenceActivity extends BaseActivity {
         mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
 
         for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
-            Log.d(TAG, "word = " + mCurrentIdiomDataList.get(i).getEngWord());
+            mCombinedDataList.add(mCurrentIdiomDataList.get(i));
         }
 
         mDataNumber = 1;

@@ -6,27 +6,40 @@
     tools:context="shotapps.allinone.WordActivity" >
 
     <TextView
-        android:id="@+id/round_txt"
+        android:id="@+id/roundTxt"
+        android:layout_above="@+id/wordTestContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="Round 1"
         android:textSize="24sp" />
 
     <LinearLayout
         android:id="@+id/wordTestContainer"
-        android:layout_below="@+id/round_txt"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="320dp"
         android:gravity="center"
         android:layout_margin="20dp"
         android:padding="10dp"
         android:orientation="vertical"
         android:background="#fff" >
-    <com.andtinder.view.CardContainer
-        android:id="@+id/cardContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/engTestWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="grin"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/jpnTestWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="にっこり笑う"
+        android:textSize="18sp"
+        android:textColor="#999" />
 
     </LinearLayout>
 
@@ -37,7 +50,7 @@
         android:layout_below="@+id/wordTestContainer" >
 
         <Button
-            android:id="@+id/word_correct"
+            android:id="@+id/wordCorrcet"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="20dp"
@@ -47,7 +60,7 @@
             android:textColor="#fff" />
 
         <Button
-            android:id="@+id/word_incorrect"
+            android:id="@+id/wordIncorrect"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="20dp"

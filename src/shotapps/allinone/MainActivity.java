@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
@@ -111,6 +112,11 @@ public class MainActivity extends BaseActivity {
 
                 ArrayList<WordData> wordDataList = findWordData(WORD_TABLE,
                         dayStart, dayEnd, ORDER_ASC);
+                if (wordDataList == null) {
+                    Toast.makeText(MainActivity.this, "データがありません。", Toast.LENGTH_SHORT);
+                    return;
+                }
+
                 myApplication.setWordDataList(wordDataList);
 
                 Intent intent = new Intent(MainActivity.this,
