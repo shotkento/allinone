@@ -74,18 +74,11 @@ public class SentenceActivity extends BaseActivity {
 
         // 対象No.の単語リストを取得
         mWordDataList = myApplication.getWordDataList();
-        mCurrentWordDataList = getCurrentWordList(mWordDataList);
+        mIdiomDataList = myApplication.getIdiomDataList();
+        mCurrentWordDataList = getCurrentWordList(mWordDataList, mIdiomDataList);
 
         for (int i = 0; i < mCurrentWordDataList.size(); i++) {
-            mCombinedDataList.add(mCurrentWordDataList.get(i));
-        }
-
-        // 対象No.の熟語リストを取得
-        mIdiomDataList = myApplication.getIdiomDataList();
-        mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
-
-        for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
-            mCombinedDataList.add(mCurrentIdiomDataList.get(i));
+            Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
         }
 
         mDataNumber = 1;
@@ -185,10 +178,17 @@ public class SentenceActivity extends BaseActivity {
 
     }
 
-    private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> list) {
+    private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> wordList, ArrayList<WordData> idiomList) {
         ArrayList<WordData> currentWordList = new ArrayList<WordData>();
-        for (int i = 0; i < list.size(); i++) {
-            WordData data = list.get(i);
+        for (int i = 0; i < wordList.size(); i++) {
+            WordData data = wordList.get(i);
+            if (data.getSentNum1() == mSentenceData.getId()
+                    || data.getSentNum2() == mSentenceData.getId()) {
+                currentWordList.add(data);
+            }
+        }
+        for (int i = 0; i < idiomList.size(); i++) {
+            WordData data = idiomList.get(i);
             if (data.getSentNum1() == mSentenceData.getId()
                     || data.getSentNum2() == mSentenceData.getId()) {
                 currentWordList.add(data);
@@ -232,17 +232,10 @@ public class SentenceActivity extends BaseActivity {
     private void setNext() {
         if (mSentenceDataList.size() > mDataNumber) {
             mSentenceData = mSentenceDataList.get(mDataNumber);
-            mCurrentWordDataList = getCurrentWordList(mWordDataList);
+            mCurrentWordDataList = getCurrentWordList(mWordDataList, mIdiomDataList);
 
             for (int i = 0; i < mCurrentWordDataList.size(); i++) {
                 Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
-            }
-
-            mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
-
-            for (int i = 0; i < mCurrentIdiomDataList.size(); i++) {
-                Log.d(TAG, "word = "
-                        + mCurrentIdiomDataList.get(i).getEngWord());
             }
 
             setData();
