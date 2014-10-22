@@ -124,12 +124,4 @@ public class WordListActivity extends BaseActivity implements TabListener,
 
         db.update(table, cv, "_id = " + id, null);
     }
-
-    private int boolean2Int(boolean checked) {
-        if (checked) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 }

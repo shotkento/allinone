@@ -14,12 +14,13 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class DialogListAdapter extends ArrayAdapter<WordData> {
+    private static final String TAG = "DialogAdapter";
     Context context = null;
     ArrayList<WordData> list = null;
     private LayoutInflater mInflater = null;
 
-    public DialogListAdapter(Activity activity, ArrayList<WordData> list) {
-        super(activity, 0);
+    public DialogListAdapter(Activity activity,int layout, ArrayList<WordData> list) {
+        super(activity, layout, list);
         this.context = activity;
         mInflater = activity.getLayoutInflater();
         this.list = list;
@@ -35,9 +36,10 @@ public class DialogListAdapter extends ArrayAdapter<WordData> {
         }else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.checkBox.setChecked(true);
-        holder.engWord.setText("");
-        holder.jpnWord.setText("");
+        WordData wordData = list.get(position);
+        holder.checkBox.setChecked(wordData.getChecked());
+        holder.engWord.setText(wordData.getEngWord());
+        holder.jpnWord.setText(wordData.getJpnWord());
         return convertView;
     }
     private static class ViewHolder {

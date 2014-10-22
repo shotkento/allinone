@@ -6,20 +6,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import shotapps.allinone.adapter.DialogListAdapter;
 import shotapps.allinone.data.SentenceData;
 import shotapps.allinone.data.WordData;
 import android.app.ActionBar;
-import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class SentenceActivity extends BaseActivity {
@@ -75,11 +81,8 @@ public class SentenceActivity extends BaseActivity {
         // 対象No.の単語リストを取得
         mWordDataList = myApplication.getWordDataList();
         mIdiomDataList = myApplication.getIdiomDataList();
-        mCurrentWordDataList = getCurrentWordList(mWordDataList, mIdiomDataList);
-
-        for (int i = 0; i < mCurrentWordDataList.size(); i++) {
-            Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());
-        }
+        mCurrentWordDataList = getCurrentWordList(mWordDataList);
+        mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
 
         mDataNumber = 1;
         isNormal = true;
@@ -135,24 +138,54 @@ public class SentenceActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        SentenceActivity.this);
-                builder.setMultiChoiceItems(test, checked,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which, boolean isChecked) {
-                                checked[which] = isChecked;
-                            }
-                        })
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                            int which) {
-                                        // TODO DBに登録
-                                    }
-                                }).show();
+                Dialog dialog = new Dialog(SentenceActivity.this);
+                dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_listview);
+                ListView wordListView = (ListView) dialog.findViewById(R.id.wordList);
+                wordListView.setAdapter(new DialogListAdapter(SentenceActivity.this, R.layout.list_word, mCurrentWordDataList));
+                wordListView.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
+                        // 選択された１行のデータを取得
+                        WordData data = (WordData) listView.getItemAtPosition(position);
+
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+                        if (checkBox.isChecked()) {
+                            checkBox.setChecked(false);
+                        } else {
+                            checkBox.setChecked(true);
+                        }
+
+                        ContentValues cv = new ContentValues();
+                        cv.put("checked", boolean2Int(checkBox.isChecked()));
+
+                        db.update(BaseActivity.WORD_TABLE, cv, "_id = " + data.getId(), null);
+
+                    }
+                });
+                ListView idiomListView = (ListView) dialog.findViewById(R.id.idiomList);
+                idiomListView.setAdapter(new DialogListAdapter(SentenceActivity.this, R.layout.list_word, mCurrentIdiomDataList));
+                idiomListView.setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
+                        // 選択された１行のデータを取得
+                        WordData data = (WordData) listView.getItemAtPosition(position);
+
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+                        if (checkBox.isChecked()) {
+                            checkBox.setChecked(false);
+                        } else {
+                            checkBox.setChecked(true);
+                        }
+
+                        ContentValues cv = new ContentValues();
+                        cv.put("checked", boolean2Int(checkBox.isChecked()));
+
+                        db.update(BaseActivity.IDIOM_TABLE, cv, "_id = " + data.getId(), null);
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -178,17 +211,10 @@ public class SentenceActivity extends BaseActivity {
 
     }
 
-    private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> wordList, ArrayList<WordData> idiomList) {
+    private ArrayList<WordData> getCurrentWordList(ArrayList<WordData> wordList) {
         ArrayList<WordData> currentWordList = new ArrayList<WordData>();
         for (int i = 0; i < wordList.size(); i++) {
             WordData data = wordList.get(i);
-            if (data.getSentNum1() == mSentenceData.getId()
-                    || data.getSentNum2() == mSentenceData.getId()) {
-                currentWordList.add(data);
-            }
-        }
-        for (int i = 0; i < idiomList.size(); i++) {
-            WordData data = idiomList.get(i);
             if (data.getSentNum1() == mSentenceData.getId()
                     || data.getSentNum2() == mSentenceData.getId()) {
                 currentWordList.add(data);
@@ -232,7 +258,8 @@ public class SentenceActivity extends BaseActivity {
     private void setNext() {
         if (mSentenceDataList.size() > mDataNumber) {
             mSentenceData = mSentenceDataList.get(mDataNumber);
-            mCurrentWordDataList = getCurrentWordList(mWordDataList, mIdiomDataList);
+            mCurrentWordDataList = getCurrentWordList(mWordDataList);
+            mCurrentIdiomDataList = getCurrentWordList(mIdiomDataList);
 
             for (int i = 0; i < mCurrentWordDataList.size(); i++) {
                 Log.d(TAG, "word = " + mCurrentWordDataList.get(i).getEngWord());

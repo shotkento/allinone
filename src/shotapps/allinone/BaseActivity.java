@@ -156,4 +156,12 @@ public abstract class BaseActivity extends FragmentActivity {
                 Integer.toString(endId) };
         return id;
     }
+
+    protected int boolean2Int(boolean checked) {
+        if (checked) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
